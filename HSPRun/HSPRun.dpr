@@ -12,31 +12,29 @@ library HSPRun;
 {$WEAKLINKRTTI ON}
 {$WARN SYMBOL_PLATFORM OFF}
 
+{$R 'mPlugin.res' 'mPlugin.rc'}
+
 
 uses
-{$IF CompilerVersion > 22.9}
-  Winapi.Windows,
-  System.SysUtils,
-  System.IniFiles,
-{$ELSE}
   Windows,
   SysUtils,
   IniFiles,
-{$IFEND}
   HSPCmp,
   mCommon in 'mCommon.pas',
   mPlugin in 'mPlugin.pas';
 
 resourcestring
   SName = 'HSPコンパイル実行';
-  SVersion = '2.0.3';
+  SVersion = '2.0.4';
 
 const
   IDS_MENU_TEXT = 1;
   IDS_STATUS_MESSAGE = 2;
   IDI_ICON = 101;
 
+{$IFDEF DEBUG}
 {$R *.res}
+{$ENDIF}
 
 
 procedure OnCommand(hwnd: HWND); stdcall;
@@ -80,7 +78,7 @@ begin
   if not GetIniFileName(S) then
     Exit;
   HSPRunFileName := ExtractFilePath(S) + 'Plugins\HSPRun\HSPRun.ini';
-  HSPDirName := 'C:\hsp331\';
+  HSPDirName := 'C:\hsp34\';
   Mode := Debug;
   DebugWindow := True;
   with TMemIniFile.Create(HSPRunFileName, TEncoding.UTF8) do
@@ -192,6 +190,8 @@ exports
   PluginProc;
 
 begin
-  // ReportMemoryLeaksOnShutdown := True;
+{$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := True;
+{$ENDIF}
 
 end.
