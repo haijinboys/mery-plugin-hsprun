@@ -15,18 +15,18 @@ const
   Release = 2;
 
 type
-  THSCIni = function(Arg1: NativeInt; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCRefName = function(Arg1: NativeInt; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCObjName = function(Arg1: NativeInt; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCComPath = function(Arg1: NativeInt; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCComp = function(Arg1: NativeInt; Arg2: NativeInt; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCGetMes = function(Arg1: PAnsiChar; Arg2: NativeInt; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSCBye = function(Arg1: NativeInt; Arg2: NativeInt; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSC3Make = function(Arg1: NativeInt; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSC3GetRuntime = function(Arg1: PAnsiChar; Arg2: PAnsiChar; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
-  THSC3Run = function(Arg1: PAnsiChar; Arg2: NativeInt; Arg3: NativeInt; Arg4: NativeInt): Boolean; stdcall;
+  THSCIni = function(Arg1: Integer; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCRefName = function(Arg1: Integer; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCObjName = function(Arg1: Integer; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCComPath = function(Arg1: Integer; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCComp = function(Arg1: Integer; Arg2: Integer; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCGetMes = function(Arg1: PAnsiChar; Arg2: Integer; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSCBye = function(Arg1: Integer; Arg2: Integer; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSC3Make = function(Arg1: Integer; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSC3GetRuntime = function(Arg1: PAnsiChar; Arg2: PAnsiChar; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
+  THSC3Run = function(Arg1: PAnsiChar; Arg2: Integer; Arg3: Integer; Arg4: Integer): Boolean; stdcall;
 
-function Execute(const HSPDirName: AnsiString; const ScriptFileName: AnsiString; const RefScriptFileName: AnsiString; Mode: NativeInt; DebugWindow: Boolean): Boolean;
+function Execute(const HSPDirName: AnsiString; const ScriptFileName: AnsiString; const RefScriptFileName: AnsiString; Mode: Integer; DebugWindow: Boolean): Boolean;
 
 var
   HSCIni: THSCIni;
@@ -42,7 +42,7 @@ var
 
 implementation
 
-function Execute(const HSPDirName: AnsiString; const ScriptFileName: AnsiString; const RefScriptFileName: AnsiString; Mode: NativeInt; DebugWindow: Boolean): Boolean;
+function Execute(const HSPDirName: AnsiString; const ScriptFileName: AnsiString; const RefScriptFileName: AnsiString; Mode: Integer; DebugWindow: Boolean): Boolean;
 var
   ScriptDirName, CommonDirPath, ObjFileName, RunTimeDirName, ExecCommand: AnsiString;
   RunTimeFileName, ObjFileShortName: array [0 .. 1024] of AnsiChar;
@@ -59,7 +59,7 @@ begin
   HSCObjName(0, PAnsiChar(ObjFileName), 0, 0);
   CommonDirPath := HSPDirName + 'common\';
   HSCComPath(0, PAnsiChar(CommonDirPath), 0, 0);
-  if ((Mode = Release) and (HSCComp(0, 4, 0, 0))) or (HSCComp(1, 0, NativeInt(DebugWindow), 0)) then
+  if ((Mode = Release) and (HSCComp(0, 4, 0, 0))) or (HSCComp(1, 0, Integer(DebugWindow), 0)) then
   begin
     HSCGetMes(@ErrorMessage, 0, 0, 0);
     MessageBoxA(0, ErrorMessage, PAnsiChar('Mery'), MB_OK or MB_ICONEXCLAMATION or MB_TASKMODAL);

@@ -3,7 +3,7 @@ HSPコンパイル実行プラグイン
 
 Copyright (c) Kuro. All Rights Reserved.
 e-mail: info@haijin-boys.com
-www:    http://www.haijin-boys.com/
+www:    https://www.haijin-boys.com/
 --------------------------------------------------------------------------------
 
 ● はじめに
@@ -11,7 +11,7 @@ www:    http://www.haijin-boys.com/
 	▼ 概要
 
 		HSPのコンパイラ(hspcmp.dll)を直接呼び出してコンパイル・実行するプラグイン。
-		標準ではHSP3.31に対応していますが、設定で3.31以前にも対応可能です。
+		標準ではHSP3.4に対応していますが、設定で3.4以前にも対応可能です。
 
 	▼ 使い方
 
@@ -30,26 +30,27 @@ www:    http://www.haijin-boys.com/
 
 ● 動作環境
 
-	Mery Build: 2.0.0.0 以降
-
-● 動作確認
-
-	Windows 7 (64ビット)
+	対応OS: Windows 10, 8, 7, Vista, XP (32 ビット, 64 ビット)
+	その他: Mery 2.2.0 以降 / HSP3.4 がインストールされている環境
+	(64ビット版のプラグインからはHSPRun.exeを経由してHSPのコンパイラを呼びます)
 
 ● インストール
 
 	アーカイブを適当なフォルダに解凍し「HSPRun.dll」を「Plugins」フォルダに配置し
 	てください。(Meryを常駐している場合は終了させてください)
 
-	HSP本体を既定以外のフォルダにインストールしている場合やHSP3.31以外のバージョン
+	HSP本体を既定以外のフォルダにインストールしている場合やHSP3.4以外のバージョン
 	を使用する場合は同梱の「HSPRun.ini」の「HSPDirName」を変更し、以下の場所に配置
 	してください。
+
+	Windows 10, 8, 7, Vista
+		C:\Users\xxxx\AppData\Roaming\Mery\Plugins\HSPRun\HSPRun.ini
 
 	Windows XP
 		C:\Documents and Settings\xxxx\Application Data\Mery\Plugins\HSPRun\HSPRun.ini
 
-	Windows Vista, 7
-		C:\Users\xxxx\AppData\Roaming\Mery\Plugins\HSPRun\HSPRun.ini
+	ポータブル環境の場合は「Mery.exe」と同じ階層の「Plugins」の配下に「HSPRun」
+	というフォルダを作成してそこに配置してください。
 
 ● アップデート
 
@@ -58,23 +59,19 @@ www:    http://www.haijin-boys.com/
 ● アンインストール
 
 	レジストリは使用していませんので、解凍したファイルを削除してください。
-	設定ファイルは下記のフォルダに保存されています。
+	設定ファイルは下記のフォルダに保存されていますので手動で削除してください。
+
+	Windows 10, 8.1, 8, 7, Vista
+		C:\Users\xxxx\AppData\Roaming\Mery\Plugins\HSPRun
 
 	Windows XP
 		C:\Documents and Settings\xxxx\Application Data\Mery\Plugins\HSPRun
 
-	Windows Vista, 7
-		C:\Users\xxxx\AppData\Roaming\Mery\Plugins\HSPRun
-
-● 免責
-
-	本ソフトを使用して生じた損害等について、作者は責任は負いません。使用者の責任で
-	本ソフトを使用してください。
-
 ● サポート
 
-	バグや苦情があれば電子メールや掲示板でご報告いただけると幸いです。
-	なお、本ソフトの最新版はhttp://www.haijin-boys.com/で公開しております。
+	本ソフトの最新版は https://www.haijin-boys.com/ で公開しております。
+	バグや苦情があれば開発者のブログのフォーラムでご報告いただけると幸いです。
+	書籍掲載のご依頼などは info@haijin-boys.com までご連絡ください。
 
 ● おわりに
 
@@ -83,6 +80,18 @@ www:    http://www.haijin-boys.com/
 	さっている皆様に感謝いたします。
 
 ● 更新履歴
+
+	▼ 2017/05/28 (2.3.1)
+
+		48x48サイズのアイコンを含めた。
+
+	▼ 2017/05/11 (2.3.0)
+
+		ツールバーのアイコンを変更。
+
+	▼ 2016/09/26 (2.0.5)
+
+		64ビット版向けに少し修正。
 
 	▼ 2015/04/20 (2.0.4)
 

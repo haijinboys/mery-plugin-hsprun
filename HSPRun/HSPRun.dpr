@@ -3,7 +3,7 @@
 //
 // Copyright (c) Kuro. All Rights Reserved.
 // e-mail: info@haijin-boys.com
-// www:    http://www.haijin-boys.com/
+// www:    https://www.haijin-boys.com/
 // -----------------------------------------------------------------------------
 
 library HSPRun;
@@ -16,16 +16,16 @@ library HSPRun;
 
 
 uses
-  Windows,
-  SysUtils,
-  IniFiles,
+  Winapi.Windows,
+  System.SysUtils,
+  System.IniFiles,
   HSPCmp,
   mCommon in 'mCommon.pas',
   mPlugin in 'mPlugin.pas';
 
 resourcestring
   SName = 'HSPコンパイル実行';
-  SVersion = '2.0.4';
+  SVersion = '2.3.1';
 
 const
   IDS_MENU_TEXT = 1;
@@ -63,16 +63,17 @@ procedure OnCommand(hwnd: HWND); stdcall;
   end;
 
 var
+{$IFNDEF WIN64}
   H: THandle;
+{$ENDIF}
   S: string;
   C: array [0 .. MAX_PATH] of Char;
-  Len: NativeInt;
+  Len: Integer;
   SelStart, SelEnd, ScrollPoint: TPoint;
   HSPRunFileName: string;
   HSPDirName: string;
   ScriptFileName: string;
-  RefScriptFileName: string;
-  Mode: NativeInt;
+  Mode: Integer;
   DebugWindow: Boolean;
 begin
   if not GetIniFileName(S) then
@@ -89,6 +90,37 @@ begin
     finally
       Free;
     end;
+  Editor_Redraw(hwnd, False);
+  try
+    Editor_GetSelStart(hwnd, POS_LOGICAL, @SelStart);
+    Editor_GetSelEnd(hwnd, POS_LOGICAL, @SelEnd);
+    Editor_GetScrollPos(hwnd, @ScrollPoint);
+    Editor_ExecCommand(hwnd, MEID_EDIT_SELECT_ALL);
+    Len := Editor_GetSelText(hwnd, 0, nil) - 1;
+    SetLength(S, Len);
+    Editor_GetSelText(hwnd, Len, @S[1]);
+    Editor_SetCaretPos(hwnd, POS_LOGICAL, @SelStart);
+    Editor_SetCaretPosEx(hwnd, POS_LOGICAL, @SelEnd, True);
+    Editor_SetScrollPos(hwnd, @ScrollPoint);
+  finally
+    Editor_Redraw(hwnd, True);
+  end;
+  Editor_Info(hwnd, MI_GET_FILE_NAME, LPARAM(@C));
+  if C = '' then
+    ScriptFileName := ExtractFilePath(ParamStr(0)) + 'hsptmp'
+  else
+    ScriptFileName := ExtractFilePath(C) + 'hsptmp';
+  SaveToFile(ScriptFileName, S);
+  if GetKeyState(VK_CONTROL) and $80 > 0 then
+  begin
+    if Mode = Debug then
+      Mode := Release
+    else
+      Mode := Debug;
+  end;
+{$IFDEF WIN64}
+  ShellExecute(0, 'open', PChar(ExtractFilePath(ParamStr(0)) + 'Plugins\HSPRun.exe'), PChar(Format('"%s" "%s" %d %d', [HSPDirName, ScriptFileName, Mode, Integer(DebugWindow)])), '', SW_HIDE);
+{$ELSE}
   H := LoadLibrary(PChar(HSPDirName + 'hspcmp.dll'));
   if H <> 0 then
   begin
@@ -102,37 +134,10 @@ begin
     @HSC3Make := GetProcAddress(H, '_hsc3_make@16');
     @HSC3GetRuntime := GetProcAddress(H, '_hsc3_getruntime@16');
     @HSC3Run := GetProcAddress(H, '_hsc3_run@16');
-    Editor_Redraw(hwnd, False);
-    try
-      Editor_GetSelStart(hwnd, POS_LOGICAL, @SelStart);
-      Editor_GetSelEnd(hwnd, POS_LOGICAL, @SelEnd);
-      Editor_GetScrollPos(hwnd, @ScrollPoint);
-      Editor_ExecCommand(hwnd, MEID_EDIT_SELECT_ALL);
-      Len := Editor_GetSelText(hwnd, 0, nil) - 1;
-      SetLength(S, Len);
-      Editor_GetSelText(hwnd, Len, @S[1]);
-      Editor_SetCaretPos(hwnd, POS_LOGICAL, @SelStart);
-      Editor_SetCaretPosEx(hwnd, POS_LOGICAL, @SelEnd, True);
-      Editor_SetScrollPos(hwnd, @ScrollPoint);
-    finally
-      Editor_Redraw(hwnd, True);
-    end;
-    Editor_Info(hwnd, MI_GET_FILE_NAME, LPARAM(@C));
-    if C = '' then
-      ScriptFileName := ExtractFilePath(ParamStr(0)) + 'hsptmp'
-    else
-      ScriptFileName := ExtractFilePath(C) + 'hsptmp';
-    SaveToFile(ScriptFileName, S);
-    if GetKeyState(VK_CONTROL) and $80 > 0 then
-    begin
-      if Mode = Debug then
-        Mode := Release
-      else
-        Mode := Debug;
-    end;
-    Execute(AnsiString(HSPDirName), AnsiString(ScriptFileName), AnsiString(RefScriptFileName), Mode, DebugWindow);
+    Execute(AnsiString(HSPDirName), AnsiString(ScriptFileName), '', Mode, DebugWindow);
     FreeLibrary(H);
   end;
+{$ENDIF}
 end;
 
 function QueryStatus(hwnd: HWND; pbChecked: PBOOL): BOOL; stdcall;
@@ -141,27 +146,27 @@ begin
   Result := True;
 end;
 
-function GetMenuTextID: NativeInt; stdcall;
+function GetMenuTextID: Cardinal; stdcall;
 begin
   Result := IDS_MENU_TEXT;
 end;
 
-function GetStatusMessageID: NativeInt; stdcall;
+function GetStatusMessageID: Cardinal; stdcall;
 begin
   Result := IDS_STATUS_MESSAGE;
 end;
 
-function GetIconID: NativeInt; stdcall;
+function GetIconID: Cardinal; stdcall;
 begin
   Result := IDI_ICON;
 end;
 
-procedure OnEvents(hwnd: HWND; nEvent: NativeInt; lParam: LPARAM); stdcall;
+procedure OnEvents(hwnd: HWND; nEvent: Cardinal; lParam: LPARAM); stdcall;
 begin
   //
 end;
 
-function PluginProc(hwnd: HWND; nMsg: NativeInt; wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall;
+function PluginProc(hwnd: HWND; nMsg: Cardinal; wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall;
 begin
   Result := 0;
   case nMsg of
