@@ -25,7 +25,7 @@ uses
 
 resourcestring
   SName = 'HSPコンパイル実行';
-  SVersion = '2.3.1';
+  SVersion = '2.3.4';
 
 const
   IDS_MENU_TEXT = 1;
@@ -38,6 +38,30 @@ const
 
 
 procedure OnCommand(hwnd: HWND); stdcall;
+  function GetTempPath: string;
+  var
+    I: Integer;
+  begin
+    Result := '';
+    SetLastError(ERROR_SUCCESS);
+{$IF CompilerVersion > 22.9}
+    I := Winapi.Windows.GetTempPath(0, nil);
+{$ELSE}
+    I := Windows.GetTempPath(0, nil);
+{$IFEND}
+    SetLength(Result, I - 1);
+{$IF CompilerVersion > 22.9}
+    if Winapi.Windows.GetTempPath(I, PWideChar(Result)) <> 0 then
+{$ELSE}
+    if Windows.GetTempPath(I, PWideChar(Result)) <> 0 then
+{$IFEND}
+    begin
+      I := GetLongPathName(PChar(Result), nil, 0);
+      SetLength(Result, I - 1);
+      GetLongPathName(PChar(Result), PChar(Result), I);
+    end;
+  end;
+
   procedure SaveToFile(const FileName, S: string);
   var
     Path: string;
@@ -79,7 +103,11 @@ begin
   if not GetIniFileName(S) then
     Exit;
   HSPRunFileName := ExtractFilePath(S) + 'Plugins\HSPRun\HSPRun.ini';
-  HSPDirName := 'C:\hsp34\';
+  HSPDirName := 'C:\hsp351p\';
+  if not DirectoryExists2(HSPDirName) then
+    HSPDirName := 'C:\hsp35\';
+  if not DirectoryExists2(HSPDirName) then
+    HSPDirName := 'C:\hsp34\';
   Mode := Debug;
   DebugWindow := True;
   with TMemIniFile.Create(HSPRunFileName, TEncoding.UTF8) do
@@ -107,7 +135,7 @@ begin
   end;
   Editor_Info(hwnd, MI_GET_FILE_NAME, LPARAM(@C));
   if C = '' then
-    ScriptFileName := ExtractFilePath(ParamStr(0)) + 'hsptmp'
+    ScriptFileName := IncludeTrailingPathDelimiter(GetTempPath) + 'hsptmp'
   else
     ScriptFileName := ExtractFilePath(C) + 'hsptmp';
   SaveToFile(ScriptFileName, S);
